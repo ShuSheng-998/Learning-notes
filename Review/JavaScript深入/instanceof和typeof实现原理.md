@@ -55,6 +55,8 @@ nicole instanceof programmer // true
 
 **但是 `instanceof` 的原理是什么呢**
 
+`普通实现`
+
 ```js
 function new_instance_of(leftVaule, rightVaule) { 
     let rightProto = rightVaule.prototype; // 取右表达式的 prototype 值
@@ -71,6 +73,23 @@ function new_instance_of(leftVaule, rightVaule) {
 }
 复制代码
 ```
+
+`利用链表实现`
+
+```js
+function instanceOf(A, B) {
+    let p = A
+    while(p){
+        if(p === B.prototype){
+            return true
+        }
+        p = p.__proto__
+    }
+    return false
+}
+```
+
+
 
 其实 `instanceof` 主要的实现原理就是只要右边变量的 `prototype` 在左边变量的原型链上即可。因此，`instanceof` 在查找的过程中会遍历左边变量的原型链，直到找到右边变量的 `prototype`，如果查找失败，则会返回 false，告诉我们左边变量并非是右边变量的实例。
 
