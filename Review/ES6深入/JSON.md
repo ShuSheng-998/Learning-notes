@@ -112,3 +112,17 @@ JSON.parse('{a:1,}')
 
 ![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/aa4398b67de34e1fa46281b7f100c98f~tplv-k3u1fbpfcp-zoom-1.image)
 
+## 使用链表指针获取JSON节点值
+
+```
+const json = {
+	a:{ b:{ c: {} } },
+	d:{e:{}}
+}
+const src = ['a', 'b', 'c']
+let p = json
+src.forEach(index => {
+	p = p[index]
+})
+```
+

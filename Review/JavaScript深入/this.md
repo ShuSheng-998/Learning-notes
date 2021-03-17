@@ -9,10 +9,17 @@ var obj = {
 }
 ```
 
+**普通函数**：
+
 1、作为对象调用时，指向该对象 obj.b(); // 指向obj
 2、作为函数调用, var b = obj.b; b(); // 指向全局window
 3、作为构造函数调用 var b = new Fun(); // this指向当前实例对象
 4、作为call与apply调用 obj.b.apply(object, []); // this指向当前的object
+
+**箭头函数中的**this:
+
+- 箭头函数没有自己的this, 它的this是继承而来; 默认指向在定义它时所处的对象(宿主对象),
+- 而不是执行时的对象, 定义它的时候,可能环境是window,也有可能是其他的。
 
 #### Types
 
