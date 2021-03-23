@@ -88,7 +88,7 @@ console.log(b); // -> [[0, 2], 3, 4]
 
 #### Object.assign(object,cloneObject)Object方法，浅拷贝
 
-#### {...cloneobject, name:'lbw'}扩展运算符
+{...cloneobject, name:'lbw'}扩展运算符
 
 #### 深拷贝
 
