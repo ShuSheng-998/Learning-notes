@@ -147,6 +147,48 @@ transform:rotate3d(10,10,10,90deg);
 
 ![clipboard.png](https://segmentfault.com/img/bVTdHU?w=182&h=114)
 
+### CSS3 transform 的执行效率
+
+我们通过一个例子来解释为什么transform的动画执行效果更佳。
+
+
+
+```css
+<!-- 对应图1-->
+
+div { height: 100px; transition: height 1s linear; }
+
+div:hover { height: 200px; } 
+
+<!-- 对应图2 -->
+
+div { transform: scale(0.5); transition: transform 1s linear; }
+
+div:hover { transform: scale(1.0); }
+```
+
+一个从 height: 100px 到 height: 200px 的 动画按照下面的流程图来执行各种操作 橙色方框的操作比较耗时，绿色方框的操作比较快速
+
+![img](https:////upload-images.jianshu.io/upload_images/1621708-2f9474dd0744d413.png?imageMogr2/auto-orient/strip|imageView2/2/w/455/format/webp)
+
+1
+
+![img](https:////upload-images.jianshu.io/upload_images/1621708-a013fcb7fed434ba.png?imageMogr2/auto-orient/strip|imageView2/2/w/510/format/webp)
+
+2
+
+
+
+因为每一帧的变化浏览器都在进行布局、绘制、把新的位图交给 GPU 内存，但是在将位图加载到GPU内存中的操作是个相对耗时的操作。
+
+GPU 在如下方面很快：
+
+- 绘制位图到屏幕上
+- 可不断的绘制相同的位图
+- 将同一位图进行位移、旋转、缩放
+
+我们看使用了transform属性的动画执行过程（图二），这个无疑是效率最优的执行方式。
+
 ## 四.阴影
 
 以前没有css3的时候，或者需要兼容低版本浏览器的时候，阴影只能用图片实现，但是现在不需要，css3就提供了！
