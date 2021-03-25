@@ -142,9 +142,9 @@ HTML代码如下。
 
 > ```markup
 > <div class="Grid">
->   <div class="Grid-cell">...</div>
->   <div class="Grid-cell">...</div>
->   <div class="Grid-cell">...</div>
+>       <div class="Grid-cell">...</div>
+>       <div class="Grid-cell">...</div>
+>       <div class="Grid-cell">...</div>
 > </div>
 > ```
 

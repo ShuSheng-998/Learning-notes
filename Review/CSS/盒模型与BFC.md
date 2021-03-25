@@ -4,24 +4,23 @@
 
 #### 1. W3C 标准盒模型：
 
-#### *属性width,height只包含内容content，不包含border和padding。*
+***属性width,height只包含内容content，不包含border和padding。***
 
 在当前W3C标准中盒模型是可以通过box-sizing自由的进行切换的。
 
 box-sizing :	content-box | border-box ， 分别设置盒模型为标准模型（`content-box`）和IE模型（`border-box`）。
 
-#### 所以说，盒子的大小为content+padding+border即内容的(width)+内边距的再加上边框，而不加上margin。很多时候，我们会错误地把margin算入，若那样的话，上面这种情形盒子的大小应该是260x270，但实际情况并不是这样的。
+**所以说，盒子的大小为content+padding+border即内容的(width)+内边距的再加上边框，而不加上margin。很多时候，我们会错误地把margin算入，若那样的话，上面这种情形盒子的大小应该是260x270，但实际情况并不是这样的。**
 
 #### 2. IE 盒模型：
 
-#### *属性width,height包含border和padding，指的是content+padding+border。*
+***属性width,height包含border和padding，指的是content+padding+border。***
 
 在ie8+浏览器中使用哪个盒模型可以由**box-sizing**(CSS新增的属性)控制，默认值为content-box，即标准盒模型；如果将box-sizing设为border-box则用的是IE盒模型。如果在ie6,7,8中DOCTYPE缺失会触发IE模式。
 
+**我们在编写页面代码时应尽量使用标准的W3C模型(需在页面中声明DOCTYPE类型)，这样可以避免多个浏览器对同一页面的不兼容。**
 
-##### 我们在编写页面代码时应尽量使用标准的W3C模型(需在页面中声明DOCTYPE类型)，这样可以避免多个浏览器对同一页面的不兼容。
-
-##### 因为若不声明DOCTYPE类型，IE浏览器会将盒子模型解释为IE盒子模型，FireFox等会将其解释为W3C盒子模型；**若在页面中声明了DOCTYPE类型，所有的浏览器都会把盒模型解释为W3C盒模型。**
+**因为若不声明DOCTYPE类型，IE浏览器会将盒子模型解释为IE盒子模型，FireFox等会将其解释为W3C盒子模型；*若在页面中声明了DOCTYPE类型，所有的浏览器都会把盒模型解释为W3C盒模型。**
 
 ### JS中如何获取盒模型的宽高
 
@@ -38,7 +37,10 @@ box-sizing :	content-box | border-box ， 分别设置盒模型为标准模型�
 
 当两个垂直外边距相遇时，他们将形成一个外边距，合并后的外边距高度等于两个发生合并的外边距的高度中的较大者。**注意**：只有普通文档流中块框的垂直外边距才会发生外边距合并，行内框、浮动框或绝对定位之间的外边距不会合并。
 
-**BFC(Block Formatting Context)**：块级格式化上下文。
+### **BFC(Block Formatting Context)**：
+
+**块级格式化上下文。**
+
 BFC决定了元素如何对其内容进行定位，以及与其他元素的关系和相互作用。当设计到可视化布局的时候，BFC提供了一个环境，HTML元素在这个环境中按照一定的规则进行布局。一个环境中的元素不会影响到其他环境中的布局。
 
 **BFC的原理（渲染规则）**

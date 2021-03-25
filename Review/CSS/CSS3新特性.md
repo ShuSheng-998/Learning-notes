@@ -92,7 +92,7 @@ both：向前和向后填充模式都被应用。  */
 
 > ```css
 > div:hover {
->   animation: 1s rainbow;
+>       animation: 1s rainbow;
 > }
 > ```
 
