@@ -322,3 +322,4 @@ http1.1是目前最为主流的http协议版本，从1999年发布至今，仍�
 例如 `index.html` 原来引用了 `a.js` 和 `b.js`，现在更新了变成 `a.js` 和 `c.js`。那就只会加载 `c.js` 文件。
 
 
+setRequestHeader('Content-Type','application/x-www-form-urlencoded')

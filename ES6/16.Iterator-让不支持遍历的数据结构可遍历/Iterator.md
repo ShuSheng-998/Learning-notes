@@ -24,7 +24,7 @@ console.log(r)			//["Agla", "grafs", "ka-zk", "kamirer", "Noxax", "setti", "Jinx
 
 * 将`Symbol.iterator`挂在author上，这个键的值是一个函数
 
-  **1.部署`Symbol.iterator`方法后，就增加了可迭代协议**
+  **1.给对象部署`Symbol.iterator`方法后，此对象就增加了可迭代协议**
 
   **2.迭代器协议：在`Sympol.iterator`方法下必须返回一个包含`next` 方法的对象，此方法还必须返回包含`done`和`value`的键**
 

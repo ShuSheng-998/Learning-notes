@@ -2,8 +2,6 @@
 
 - 在工作目录新建一个文件夹
 
-- `npm init` 初始化一个文件夹,出现对话框按确定就行。
-
 - `npm install --global webpack` 全局安装，在c盘下会生成node_modules文件夹中会包含webpack。`请注意，这不是推荐的做法。全局安装会将您锁定到特定版本的webpack，并且在使用不同版本的项目中可能会失败。`官方并不推荐全局安装。
 
 - `npm install --save-dev webpack` 安装在本地开发环境中
