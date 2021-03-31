@@ -50,3 +50,8 @@ module.exports = {
 "start": "webpack --config webpack.config.js --progress --display-modules --colors --display-reasons"
 ```
 
+
+
+### loader
+
+Loaders 是一种预处理器，它可以在 Webpack 编译之前把你应用中的静态资源进行转换 
