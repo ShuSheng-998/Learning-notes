@@ -23,13 +23,14 @@
       },
   ```
 
-  
+
+### noParse（不去管理哪些？）
+
+`noParse` 。在引入一些第三方模块时（如jq)，我们知道他肯定不会引用其他的依赖模块。所以不需要webpack花费时间去解析他的内部依赖
 
 ### IgnorePlugin（忽略一些）
 
-
-
-### noParse（不去管理哪些？）
+`IgnorePlugin`。在引入一些第三方模块时，例如momentJS、dayJS，会有很多语言包，会占用很多空间，**所以可以忽略所有语言包**，然后再按需引入，使构建效率更高
 
 ### happyPack（多进程打包）
 
@@ -98,19 +99,208 @@
           })
   ```
 
-  
+
+## 只能开发环境下配置
 
 ### 自动刷新
 
+* 启动`webpack-dev-server`服务后，添加字段`watch: true`
+
+* 自动刷新（watch）：整个网页全部刷新，速度较慢
+* 自动刷新：整个网页全部刷新，状态会丢失
+
 ### 热更新
+
+#### 热更新原理
+
+> **大概流程是我们用webpack-dev-server启动一个服务之后，浏览器和服务端是通过websocket进行长连接，**
+>
+> **webpack内部实现的watch就会监听文件修改，只要有修改就webpack会重新打包编译到内存中，然后webpack-dev-server依赖中间件webpack-dev-middleware和webpack之间进行交互，**
+>
+> **每次热更新都会请求一个携带hash值的json文件和一个js，websocket传递的也是hash值，内部机制通过hash值检查进行热更新，如果这些模块无法更新，则会刷新页面 至于内部原理，因为水平限制，目前还看不懂。**
+
+* 使用
+
+  1. 在`webpack.dev.js`下导入
+
+     `const HotModuleReplacementPlugin = require('webpack/lib/HotModuleReplacementPlugin');`
+
+  2. 在`devServer`下增加`hot: true`字段
+
+  3. `dev`环境下，入口文件另外增加两个字段
+
+     ```js
+     entry: {
+             // index: path.join(srcPath, 'index.js'),
+             index: [
+                 'webpack-dev-server/client?http://localhost:8080/',
+                 'webpack/hot/dev-server',
+                 path.join(srcPath, 'index.js')
+             ],
+             other: path.join(srcPath, 'other.js')
+         },
+     ```
+
+  4. 新建`plugin`
+
+     `new HotModuleReplacementPlugin()`
+
+* 修改CSS自动更新，无序刷新页面
+
+* 修改CSS模块，需要监听对应的模块的修改了？，然乎执行响应的回调
+
+  ```js
+   // 增加，开启热更新之后的代码逻辑
+  if (module.hot) {
+       module.hot.accept(['./math'], () => {
+          const sumRes = sum(10, 30)
+          console.log('sumRes in hot', sumRes)
+     })
+  }
+  ```
+
+  
 
 ### DllPlugin
 
-对于第三方库，不用每次跟新代码，编译时都重新打包，提前打包好，以后直接引用
+对于第三方动态库，不用每次更新代码，编译时都重新打包，提前打包好，以后直接引用
+
+* DllPlugin		打包出dll文件
+* DllReferencePlugin        多次引用dll文件
+* 利用`DllPlugin`和`DllReferencePlugin`预编译资源模块 通过`DllPlugin`来对那些我们引用但是绝对不会修改的npm包来进行预编译，再通过`DllReferencePlugin`将预编译的模块加载进来。
 
 # 优化产出代码
 
 **提升产品性能**
+
+* 体积更小
+* 合理分包，不重复加载
+* 速度更快，内存使用更少
+
+### 小图片base64编码
+
+* 设置`options`的`limit`字段，对于小于5kb的图片使用base64编码存储，减少了一次http请求
+
+  ```js
+  {
+                  test: /\.(png|jpg|jpeg|gif)$/,
+                  use: {
+                      loader: 'url-loader',
+                      options: {
+                          // 小于 5kb 的图片用 base64 格式产出
+                          // 否则，依然延用 file-loader 的形式，产出 url 格式
+                          limit: 5 * 1024,
+  
+                          // 打包到 img 目录下
+                          outputPath: '/img1/',
+  
+                          // 设置图片的 cdn 地址（也可以统一在外面的 output 中设置，那将作用于所有静态资源）
+                          // publicPath: 'http://cdn.abc.com'
+                      }
+                  }
+              },
+  ```
+
+  
+
+### bundle加hash值
+
+* 打包出来的JS文件，因为多入口的原因使用`[contentHsh:8]`,代码变了，重新编译，hash值会变，缓存失效请求新的文件，**没改变则能命中缓存**
+
+### 懒加载
+
+* 使用定时器和`impot`
+
+  ```js
+  setTimeout(() => {
+  	import('./dynamic-data.js').then((res) => {
+  		console.log(res.default.message)  //注意可以使用defailt拿数据
+  	})
+  }, 1500)
+  
+  //danamic.js
+  export default {
+      message: 'this is dynamic data'
+  }
+  ```
+
+
+### `splitChunks`Plugin抽离公共模块
+
+**在线上环境配置下**，第三方模块或公共模块被单独打包
+
+```js
+`index.js`可以看成一个`chunk`，里面引用了许多js,
+
+抽离公共代码（`splitChunksPlugin`），指从`index`入口文件这个`chunk`中抽离出符合条件的js文件重新组成一个`chunk`，然后在`new HtmlWebpackPlugin`中配置`chunks`属性，页面可以按需加载`chunk`
+```
+
+* 公共的模块
+* 第三方模块
+
+**防止多个入口文件引用了相同模块后，多次加载这个相同模块**，
+
+**防止改业务代码后，hash值改变，再次去引入第三方模块**
+
+* 导入
+
+  ```js
+  const TerserJSPlugin = require('terser-webpack-plugin')
+  const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+  ```
+
+* 使用（添加`optimization`属性，属性下的`splitChunks`对象）
+
+  ```js
+  optimization: {
+          // 压缩 css
+          minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
+  
+          // 分割代码块
+          splitChunks: {
+              chunks: 'all',
+              /**
+               * initial 入口 chunk，对于异步导入的文件不处理
+                  async 异步 chunk，只对异步导入的文件处理
+                  all 全部 chunk
+               */
+  
+              // 缓存分组
+              cacheGroups: {
+                  // 第三方模块
+                  vendor: {
+                      name: 'vendor', // chunk 名称
+                      priority: 1, // 权限更高，优先抽离，重要！！！
+                      test: /node_modules/,
+                      minSize: 0,  // 大小限制
+                      minChunks: 1  // 最少复用过几次,才会被独立打包
+                  },
+  
+                  // 公共的模块
+                  common: {
+                      name: 'common', // chunk 名称
+                      priority: 0, // 优先级
+                      minSize: 0,  // 公共模块的大小限制
+                      minChunks: 2  // 公共模块最少复用过几次
+                  }
+              }
+          }
+      }
+  ```
+
+### `IgnorePlugin`
+
+### 使用CDN加速
+
+* 修改`output`，修改所有静态文件url的前缀（JS）
+
+![image-20210402135437579](C:\Users\DELL\AppData\Roaming\Typora\typora-user-images\image-20210402135437579.png)
+
+* 将打包好的静态资源文件上传到CDN服务器上
+
+* 也可以对图片进行CDN加速(添加`publicPath`属性)
+
+  ![image-20210402135716693](C:\Users\DELL\AppData\Roaming\Typora\typora-user-images\image-20210402135716693.png)
 
 # 关于开启多进程
 

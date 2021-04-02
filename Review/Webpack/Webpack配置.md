@@ -21,7 +21,7 @@
   }
   ```
 
-* **在`index.js`中引入`.css`或`.less`文件后，对应的`loader`模块就会器作用**
+* **在`index.js`中引入`.css`或`.less`文件后，对应的`loader`模块就会起作用**
 
 * `plugins`中要有`HtmlWebpackPlugin`
 
@@ -76,6 +76,8 @@
 
 
 ### merge使用
+
+* 使用`webpack-merge`区分线上环境和开发环境
 
 * 从`webpack.common.js`导入`webpackCommonConfig`
 
@@ -356,9 +358,6 @@ proxy: {
   }
   ```
 
-  
-
-# 四、处理样式
 
 ### 不在`webpack.common.js`中处理
 
@@ -498,7 +497,7 @@ proxy: {
 
   ```js
   output: {
-          filename: 'bundle.[contentHash:8].js',  // 打包代码时，加上 hash 戳
+          filename: '[name].[contentHash:8].js',  // 打包代码时，加上 hash 戳
           path: distPath,
           // publicPath: 'http://cdn.abc.com'  // 修改所有静态文件 url 的前缀（如 cdn 域名），这里暂时用不到
       },
