@@ -14,6 +14,15 @@
 
 为了解决这两个问题，react团队经过两年的工作，重写了react中核心算法——[reconciliation](https://reactjs.org/docs/reconciliation.html)。并在v16版本中发布了这个新的特性。为了区别之前和之后的reconciler，通常将之前的reconciler称为stack reconciler，重写后的称为fiber reconciler，简称为Fiber。
 
+1. 作为**架构**，**构成Fiber树**
+
+2. 作为**静态数据结构**，保存**组件相关信息**
+
+3. 作为**工作单元**保存**更新信息**
+
+* 单个组件来看，Reconciler更新工作从递归变成了**可以中断的循环过程**。每次循环都会调用shouldYield判断是否有剩余时间。
+* 整个页面的组件来看，同样解决了更新时**DOM渲染不完全的问题**，Reconciler与Renderer不再是交替工作，整个**Scheduler**与**Reconciler**的工作都在内存中进行。只有当所有组件都完成**Reconciler**的工作，才会统一交给**Renderer**。
+
 ## 卡顿原因
 
 Stack reconciler的**工作流程很像函数的调用过程。**父组件里调子组件，可以类比为函数的递归（这也是为什么被称为stack reconciler的原因）。在setState后，react会立即开始reconciliation过程，从父节点（Virtual DOM）开始遍历，以找出不同。将所有的Virtual DOM遍历完成后，reconciler才能给出当前需要修改真实DOM的信息，并传递给renderer，进行渲染，然后屏幕上才会显示此次更新内容。对于特别庞大的vDOM树来说，reconciliation过程会很长(x00ms)，在这期间，主线程是被js占用的，因此任何交互、布局、渲染都会停止，给用户的感觉就是页面被卡住了。
@@ -89,7 +98,7 @@ module.exports = {
 复制代码
 ```
 
-优先级策略的核心是，在reconciliation阶段，低优先级的操作可以被高优先级的操作打断，并让主线程执行高优先级的更新，以时用户可感知的响应更快。值得注意的一点是，当主线程重新分配给低优先级的操作时，并不会从上次工作的状态开始，而是从新开始。
+优先级策略的核心是，在reconciliation阶段，低优先级的操作可以被高优先级的操作打断，并让主线程执行高优先级的更新，以时用户可感知的响应更快。**值得注意的一点是，当主线程重新分配给低优先级的操作时，并不会从上次工作的状态开始，而是从新开始。**
 
 这就可能会产生两个问题：
 
