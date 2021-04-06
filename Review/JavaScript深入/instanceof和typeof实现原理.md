@@ -79,7 +79,7 @@ function new_instance_of(leftVaule, rightVaule) {
 ```js
 function instanceOf(A, B) {
     let p = A
-    while(p){
+    while(p) {
         if(p === B.prototype){
             return true
         }

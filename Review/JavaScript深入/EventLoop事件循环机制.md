@@ -20,17 +20,20 @@ js引擎**遇到一个异步事件后并不会一直等待其返回结果，而�
 
 ##### 3.macro task 与micro  task
 
-以下事件属于宏任务：
+- ## 宏任务有哪些
 
-- `setInterval()`
-- `setTimeout()`
+  - `<script>`标签中的运行代码
+  - 事件触发的回调函数，例如`DOM Events`、`I/O`、`requestAnimationFrame`
+  - `setTimeout`、`setInterval`的回调函数
 
-以下事件属于微任务
+  ## 微任务有哪些
 
-- `new Promise()`
-- `new MutaionObserver()`
+  - **promises**：`Promise.then`、`Promise.catch`、`Promise.finally`
+  - **`MutationObserver`**：[使用方式](http://javascript.ruanyifeng.com/dom/mutationobserver.html)
+  - **`queueMicrotask`**：[使用方式](https://developer.mozilla.org/zh-CN/docs/Web/API/WindowOrWorkerGlobalScope/queueMicrotask)
+  - **`process.nextTick`**：Node独有
 
-我们只需记住**当 当前执行栈执行完毕时会立刻先处理所有微任务队列中的事件，然后再去宏任务队列中取出一个事件。同一次事件循环中，微任务永远在宏任务之前执行**。
+我们只需记住**当 当前执行栈执行完毕时会立刻先处理所有微任务队列中的事件，然后再去宏任务队列中取出一个事件。同一次事件循环中，微任务永远在宏任务之前执行**。宏任务中有微任务，会先把这次的微任务执行完。才向下走
 
 #### node环境下的事件循环机制
 
