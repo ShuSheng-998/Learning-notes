@@ -24,13 +24,32 @@
   ```
 
 
-### noParse（不去管理哪些？）
+### noParse（不去解析哪些依赖？）
 
 `noParse` 。在引入一些第三方模块时（如jq)，我们知道他肯定不会引用其他的依赖模块。所以不需要webpack花费时间去解析他的内部依赖
+
+启用noParse：
+
+```js
+  module: {
+    // 不去解析jquery的依赖关系
+    noParse: /jquery/
+  },
+```
 
 ### IgnorePlugin（忽略一些）
 
 `IgnorePlugin`。在引入一些第三方模块时，例如momentJS、dayJS，会有很多语言包，会占用很多空间，**所以可以忽略所有语言包**，然后再按需引入，使构建效率更高
+
+`ignorePlugin`启用方法：
+
+```js
+// 用法：
+new webpack.IgnorePlugin(requestRegExp, [contextRegExp]);
+
+//eg.
+plugins: [new webpack.IgnorePlugin(/\.\/local/, /moment/)];
+```
 
 ### happyPack（多进程打包）
 
@@ -119,6 +138,12 @@
 >
 > **每次热更新都会请求一个携带hash值的json文件和一个js，websocket传递的也是hash值，内部机制通过hash值检查进行热更新，如果这些模块无法更新，则会刷新页面 至于内部原理，因为水平限制，目前还看不懂。**
 
+**模块热替换**(HMR - Hot Module Replacement)功能会**在应用程序运行过程中替换、添加或删除模块，而无需重新加载整个页面。**主要是通过以下几种方式，来显著加快开发速度：
+
+- 保留在完全重新加载页面时**丢失的应用程序状态。**
+- **只更新变更内容，**以节省宝贵的开发时间。
+- 调整样式更加快速 - **几乎相当于在浏览器调试器中更改样式**
+
 * 使用
 
   1. 在`webpack.dev.js`下导入
@@ -145,7 +170,7 @@
 
      `new HotModuleReplacementPlugin()`
 
-* 修改CSS自动更新，无序刷新页面
+* 修改CSS自动更新，无需刷新页面
 
 * 修改CSS模块，需要监听对应的模块的修改了？，然乎执行响应的回调
 
@@ -163,7 +188,7 @@
 
 ### DllPlugin
 
-对于第三方动态库，不用每次更新代码，编译时都重新打包，提前打包好，以后直接引用
+对于第三方动态库，不用每次更新代码，编译时都重新打包，提前打包好，**以后直接引用**
 
 * DllPlugin		打包出dll文件
 * DllReferencePlugin        多次引用dll文件
@@ -205,7 +230,7 @@
 
 ### bundle加hash值
 
-* 打包出来的JS文件，因为多入口的原因使用`[contentHsh:8]`,代码变了，重新编译，hash值会变，缓存失效请求新的文件，**没改变则能命中缓存**
+* 打包出来的JS文件，因为多入口的原因使用`[contentHash:8]`,代码变了，重新编译，hash值会变，缓存失效请求新的文件，**没改变则能命中缓存**
 
 ### 懒加载
 
