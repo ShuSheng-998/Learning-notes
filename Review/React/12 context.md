@@ -1,8 +1,16 @@
 ### Context（上下文）
 
 * 公共信息：如语言，切换主题（黑夜到白天），如何传递给每个子组件？
+* 使公共信息能较为轻松地在组件之间传递并使用
 * 用props太繁琐
 * 用redux小题大做
+
+步骤
+
+* 父组件在class外使用`React.createContext`创建`myContext`
+* 父组件使用`myContext.Provider  value = {}`向下传递value值付赋给`context`
+* 子组件在class用`myChild.contextType = myContext`（`myChild`是子组件名）读取到父组件地context，
+* 子组件使用theme = this.context拿到context传过来地value地值
 
 ### 生产数据
 
