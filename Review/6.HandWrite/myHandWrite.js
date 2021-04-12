@@ -13,9 +13,10 @@ function myInstanceOf(A, B) {
 
 /* 数组扁平化 */
 function flatten(arr){
-    let res = []
-    for(let i = 0;i < arr.length;i++){
-        if(Array.isArray(arr[i])){
+    let res = [],
+        len = arr.length
+    for(let i =0;i<len;i++){
+        if(arr[i] instanceof Array){
             res.concat(flatten(arr[i]))
         }else{
             res.concat(arr[i])
@@ -52,41 +53,41 @@ function deepClone(obj) {
 }
 
 /* bind */
-function myBind(context, ...args1){
+function myBind(context, ...outerArgs){
     let self = this
-    let fNOP = function() {}
+    let fNop = function(){}
 
-    let fBound = function(...args2){
-        return self.apply(this instanceof fBound ? this : context, args1.concat(args2))
-
+    let fBound = function(...innerArgs){
+        return self.apply(this instanceof fBound? this:context, outerArgs.concat(innerArgs))
     }
-    fNOP.prototype = self.prototype
-    fBound.prototype = new fNOP()
+    fNop.prototype = self.prototype
+    fBound.prototype = new fNop()
     return fBound
 }
 
 /* 防抖 */
 function debounce(func, wait, immediate){
-    let timeout ,res
+    let timeout, res
 
-    return function() {
+    return function(){
         let context = this,
             args = arguments
-        
-            if(immediate){
-                let calNow = !timeout
+        if(timeout) clearTimeout(timeout)
 
-                timeout = setTimeout(function(){
-                    timeout =null
-                }, wait)
-                if(calNow){
-                   res = func.apply(context, args)
-                }
-            }else{
-                timeout = setTimeout(function(){
-                    func.apply(context,wait)
-                }, wait)
+        if(immediate){
+            let calNow = !timeout
+
+            timeout = setTimeout(function(){
+                timeout = null
+            },wait)
+            if(calNow){
+                res = func.apply(context, args)
             }
+        }else{
+            setTimeout(function(){
+                func.apply(context, args)
+            }, wait)
+        }
         return res
     }
 }
@@ -223,3 +224,19 @@ Promise.prototype.race = function(promises){
 }
 
 /* call实现 */
+Function.prototype.call = function(obj = window){
+    obj.fn = this//拿到方法名
+    let args = [...arguments].splice(1)//拿到参数
+    let res = obj.fn(...args)//以方法名和参数获得结果
+    delete obj.fn
+    return res
+}
+
+/* apply实现 */
+Function.prototype.apply = function(obj = window){
+    obj.fn = this
+    let args = this.arguments[1]
+    let res = args? obj.fn(...args):boj.fn()
+    delete obj.fn
+    return res
+}

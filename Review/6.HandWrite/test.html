@@ -8,19 +8,7 @@
 </head>
 <body>
     <script>
-        var Parent = function(name){
-            this.name = name
-            this.sayHai_onOwn = function(){
-                console.log(this.name);
-            }
-        }
-        var Children = function(name){
-            Parent.call(name)
-        }
-        var father = new Parent('lbw')
-        var son = new Children('child')
-        father.sayHai_onOwn()
-        son.sayHai_onOwn()
+       
     </script>
 </body>
 </html>
